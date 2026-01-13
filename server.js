@@ -5,36 +5,22 @@ import { fileURLToPath } from "url";
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Fix __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from the project root
+// Serve static files (index.html, main.js, styles.css, images, etc.)
 app.use(express.static(__dirname));
 
-// Routes
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/contact", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/employee-login", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-// Fallback (important for refresh / direct links)
+// Always send index.html for any page route
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"), (err) => {
+    if (err) {
+      console.error("sendFile error:", err);
+      res.status(500).send("Server error loading index.html");
+    }
+  });
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`Memorial Transportation server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
